@@ -1,3 +1,5 @@
+import { faker } from "@faker-js/faker";
+
 describe("Issue create", () => {
   beforeEach(() => {
     cy.visit("/");
@@ -11,6 +13,8 @@ describe("Issue create", () => {
 
   const title = "Bug";
   const description = "My bug description";
+  const randomTitle = faker.random.words(1);
+  const randomDescription = faker.random.words(4);
 
   it("Should create an issue and validate it successfully", () => {
     // System finds modal for creating issue and does next steps inside of it
@@ -48,6 +52,7 @@ describe("Issue create", () => {
     // Reload the page to be able to see recently created issue
     // Assert that successful message has dissappeared after the reload
     cy.reload();
+    cy.wait(30000);
     cy.contains("Issue has been successfully created.").should("not.exist");
 
     // Assert than only one list with name Backlog is visible and do steps inside of it
@@ -68,16 +73,9 @@ describe("Issue create", () => {
             cy.get('[data-testid="icon:story"]').should("be.visible");
           });
       });
-
-    cy.get('[data-testid="board-list:backlog"]')
-      .contains("TEST_TITLE")
-      .within(() => {
-        // Assert that correct avatar and type icon are visible
-        cy.get('[data-testid="avatar:Lord Gaben"]').should("be.visible");
-        cy.get('[data-testid="icon:story"]').should("be.visible");
-      });
   });
-  it.only("Should create an issue and validate it successfully", () => {
+
+  it("Should create an issue - Bug and validate it successfully", () => {
     cy.get('[data-testid="modal:issue-create"]').within(() => {
       cy.get(".ql-editor").type(description);
       cy.get(".ql-editor").should("have.text", description);
@@ -104,6 +102,7 @@ describe("Issue create", () => {
     cy.get('[data-testid="modal:issue-create"]').should("not.exist");
     cy.contains("Issue has been successfully created.").should("be.visible");
     cy.reload();
+    cy.wait(30000);
     cy.contains("Issue has been successfully created.").should("not.exist");
     cy.get('[data-testid="board-list:backlog"]')
       .should("be.visible")
@@ -119,19 +118,57 @@ describe("Issue create", () => {
             cy.get('[data-testid="icon:bug"]').should("be.visible");
           });
       });
+  });
 
-    it("Should validate title is required field if missing", () => {
-      // System finds modal for creating issue and does next steps inside of it
-      cy.get('[data-testid="modal:issue-create"]').within(() => {
-        // Try to click create issue button without filling any data
-        cy.get('button[type="submit"]').click();
+  it.only("Should create an issue using faker - Task and validate it successfully", () => {
+    cy.get('[data-testid="modal:issue-create"]').within(() => {
+      cy.get(".ql-editor").type(randomDescription);
+      cy.get(".ql-editor").should("have.text", randomDescription);
+      cy.get('input[name="title"]').type(randomTitle);
+      cy.get('input[name="title"]').should("have.value", randomTitle);
 
-        // Assert that correct error message is visible
-        cy.get('[data-testid="form-field:title"]').should(
-          "contain",
-          "This field is required"
-        );
+      cy.get('[data-testid="avatar:Lord Gaben"]').click();
+      cy.get('[data-testid="select-option:Baby Yoda"]').click();
+
+      cy.get('[data-testid="select:priority"]').click();
+      cy.get('[data-testid="select-option:Low"]').click();
+      cy.get('[data-testid="icon:arrow-down"]').should("be.visible");
+
+      cy.get('button[type="submit"]').click();
+    });
+
+    cy.get('[data-testid="modal:issue-create"]').should("not.exist");
+    cy.contains("Issue has been successfully created.").should("be.visible");
+    cy.reload();
+    cy.wait(30000);
+    cy.contains("Issue has been successfully created.").should("not.exist");
+    cy.get('[data-testid="board-list:backlog"]')
+      .should("be.visible")
+      .and("have.length", "1")
+      .within(() => {
+        cy.get('[data-testid="list-issue"]')
+          .should("have.length", "5")
+          .first()
+          .find("p")
+          .contains(randomTitle)
+          .siblings()
+          .within(() => {
+            cy.get('[data-testid="icon:task"]').should("be.visible");
+          });
       });
+  });
+
+  it("Should validate title is required field if missing", () => {
+    // System finds modal for creating issue and does next steps inside of it
+    cy.get('[data-testid="modal:issue-create"]').within(() => {
+      // Try to click create issue button without filling any data
+      cy.get('button[type="submit"]').click();
+
+      // Assert that correct error message is visible
+      cy.get('[data-testid="form-field:title"]').should(
+        "contain",
+        "This field is required"
+      );
     });
   });
 });
