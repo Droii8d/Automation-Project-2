@@ -13,8 +13,8 @@ describe("Issue create", () => {
 
   const title = "Bug";
   const description = "My bug description";
-  const randomTitle = faker.random.words(1);
-  const randomDescription = faker.random.words(4);
+  const randomTitle = faker.lorem.words(1);
+  const randomDescription = faker.lorem.words(4);
 
   it("Should create an issue and validate it successfully", () => {
     // System finds modal for creating issue and does next steps inside of it
@@ -89,8 +89,16 @@ describe("Issue create", () => {
         .trigger("click");
       cy.get('[data-testid="icon:bug"]').should("be.visible");
 
-      cy.get('[data-testid="avatar:Lord Gaben"]').click();
-      cy.get('[data-testid="select-option:Pickle Rick"]').click();
+      cy.get('[data-testid="form-field:reporterId"]')
+        .should("be.visible")
+        .click();
+      cy.get('[data-testid="select-option:Pickle Rick"]')
+        .should("be.visible")
+        .click();
+      cy.get('[data-testid="select:userIds"]').should("be.visible").click();
+      cy.get('[data-testid="select-option:Lord Gaben"]')
+        .should("be.visible")
+        .click();
 
       cy.get('[data-testid="select:priority"]').click();
       cy.get('[data-testid="select-option:Highest"]').click();
@@ -116,19 +124,41 @@ describe("Issue create", () => {
           .siblings()
           .within(() => {
             cy.get('[data-testid="icon:bug"]').should("be.visible");
+            cy.get('[data-testid="avatar:Lord Gaben"]').should("be.visible");
           });
       });
   });
 
-  it.only("Should create an issue using faker - Task and validate it successfully", () => {
+  it.only("Should create an issue using faker random data - Task and validate it successfully", () => {
     cy.get('[data-testid="modal:issue-create"]').within(() => {
       cy.get(".ql-editor").type(randomDescription);
       cy.get(".ql-editor").should("have.text", randomDescription);
       cy.get('input[name="title"]').type(randomTitle);
       cy.get('input[name="title"]').should("have.value", randomTitle);
 
-      cy.get('[data-testid="avatar:Lord Gaben"]').click();
-      cy.get('[data-testid="select-option:Baby Yoda"]').click();
+      cy.get('[data-testid="select:type"]').click();
+      cy.get('[data-testid="select-option:Story"]')
+        .wait(1000)
+        .trigger("mouseover")
+        .trigger("click");
+
+      cy.get('[data-testid="select:type"]').click();
+      cy.get('[data-testid="select-option:Task"]')
+        .wait(1000)
+        .trigger("mouseover")
+        .trigger("click");
+      cy.get('[data-testid="icon:task"]').should("be.visible");
+
+      cy.get('[data-testid="form-field:reporterId"]')
+        .should("be.visible")
+        .click();
+      cy.get('[data-testid="select-option:Baby Yoda"]')
+        .should("be.visible")
+        .click();
+      cy.get('[data-testid="select:userIds"]').should("be.visible").click();
+      cy.get('[data-testid="select-option:Lord Gaben"]')
+        .should("be.visible")
+        .click();
 
       cy.get('[data-testid="select:priority"]').click();
       cy.get('[data-testid="select-option:Low"]').click();
@@ -154,6 +184,7 @@ describe("Issue create", () => {
           .siblings()
           .within(() => {
             cy.get('[data-testid="icon:task"]').should("be.visible");
+            cy.get('[data-testid="avatar:Lord Gaben"]').should("be.visible");
           });
       });
   });
