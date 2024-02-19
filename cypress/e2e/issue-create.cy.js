@@ -129,7 +129,7 @@ describe("Issue create", () => {
       });
   });
 
-  it.only("Should create an issue using faker random data - Task and validate it successfully", () => {
+  it("Should create an issue using faker random data - Task and validate it successfully", () => {
     cy.get('[data-testid="modal:issue-create"]').within(() => {
       cy.get(".ql-editor").type(randomDescription);
       cy.get(".ql-editor").should("have.text", randomDescription);
