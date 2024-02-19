@@ -1,33 +1,29 @@
 import IssueModal from "../pages/IssueModal";
 
-describe("Issue deleting and cancellation", () => {
+describe("Issue delete", () => {
   beforeEach(() => {
     cy.visit("/");
     cy.url()
       .should("eq", `${Cypress.env("baseUrl")}project`)
       .then((url) => {
         cy.visit(url + "/board");
-        cy.contains("This is an issue of type: Task.").click();
+        cy.contains(issueTitle).click();
         IssueModal.getIssueDetailModal().should("be.visible");
       });
   });
 
-  it("Should delete an issue and validate successful deletion", () => {
+  const issueTitle = "This is an issue of type: Task.";
+
+  it("Should delete issue successfully", () => {
     IssueModal.clickDeleteButton();
     IssueModal.confirmDeletion();
-    IssueModal.validateIssueVisibilityState(
-      "This is an issue of type: Task.",
-      false
-    );
+    IssueModal.validateIssueVisibilityState(issueTitle, false);
   });
 
-  it.only("Should initiate deletion of issue and then cancel deletion", () => {
+  it("Should cancel deletion process successfully", () => {
     IssueModal.clickDeleteButton();
     IssueModal.cancelDeletion();
     IssueModal.closeDetailModal();
-    IssueModal.validateIssueVisibilityState(
-      "This is an issue of type: Task.",
-      true
-    );
+    IssueModal.validateIssueVisibilityState(issueTitle, true);
   });
 });
