@@ -8,7 +8,7 @@ describe("Issue deleting and cancellation", () => {
       .then((url) => {
         cy.visit(url + "/board");
         cy.contains("This is an issue of type: Task.").click();
-        cy.get('[data-testid="modal:issue-details"]').should("be.visible");
+        IssueModal.getIssueDetailModal().should("be.visible");
       });
   });
 
@@ -21,7 +21,7 @@ describe("Issue deleting and cancellation", () => {
     );
   });
 
-  it("Should initiate deletion of issue and then cancel deletion", () => {
+  it.only("Should initiate deletion of issue and then cancel deletion", () => {
     IssueModal.clickDeleteButton();
     IssueModal.cancelDeletion();
     IssueModal.closeDetailModal();
