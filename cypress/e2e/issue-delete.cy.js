@@ -1,5 +1,3 @@
-import IssueModal from "../pages/IssueModal";
-
 describe("Issue delete", () => {
   beforeEach(() => {
     cy.visit("/");
@@ -8,22 +6,65 @@ describe("Issue delete", () => {
       .then((url) => {
         cy.visit(url + "/board");
         cy.contains(issueTitle).click();
-        IssueModal.getIssueDetailModal().should("be.visible");
       });
   });
 
   const issueTitle = "This is an issue of type: Task.";
+  const issueListLenghtAfterDelete = 3;
+  const issueListLenghtAfterDeleteCancel = 4;
+  const getIssueDetailsModal = () =>
+    cy.get('[data-testid="modal:issue-details"]');
+  const getConfirmModal = () => cy.get('[data-testid="modal:confirm"]');
+  const boardBacklogList = () => cy.get('[data-testid="board-list:backlog"]');
+  const issueList = () => cy.get('[data-testid="list-issue"]');
 
   it("Should delete issue successfully", () => {
-    IssueModal.clickDeleteButton();
-    IssueModal.confirmDeletion();
-    IssueModal.validateIssueVisibilityState(issueTitle, false);
+    getIssueDetailsModal().should("be.visible");
+    getIssueDetailsModal().within(() => {
+      cy.get('[data-testid="icon:trash"]').click();
+    });
+    getConfirmModal().within(() => {
+      cy.contains("Delete issue").should("be.visible").click();
+    });
+    getConfirmModal().should("not.exist");
+    getIssueDetailsModal().should("not.exist");
+
+    cy.reload();
+    cy.wait(10000);
+
+    boardBacklogList()
+      .should("be.visible")
+      .within(() => {
+        cy.contains(issueTitle).should("not.exist");
+        issueList().should("have.length", issueListLenghtAfterDelete);
+      });
   });
 
   it("Should cancel deletion process successfully", () => {
-    IssueModal.clickDeleteButton();
-    IssueModal.cancelDeletion();
-    IssueModal.closeDetailModal();
-    IssueModal.validateIssueVisibilityState(issueTitle, true);
+    getIssueDetailsModal().should("be.visible");
+    getIssueDetailsModal().within(() => {
+      cy.get('[data-testid="icon:trash"]').click();
+    });
+    getConfirmModal().within(() => {
+      cy.contains("Cancel").click();
+    });
+    getConfirmModal().should("not.exist");
+
+    getIssueDetailsModal()
+      .should("be.visible")
+      .get('[data-testid="icon:close"]')
+      .first()
+      .click();
+    getIssueDetailsModal().should("not.exist");
+
+    cy.reload();
+    cy.wait(10000);
+
+    boardBacklogList()
+      .should("be.visible")
+      .within(() => {
+        cy.contains(issueTitle).should("be.visible");
+        issueList().should("have.length", issueListLenghtAfterDeleteCancel);
+      });
   });
 });

@@ -1,4 +1,4 @@
-import IssueModal from "../pages/IssueModal";
+import IssueModal from "../../pages/IssueModal";
 
 describe("Issue delete", () => {
   beforeEach(() => {
