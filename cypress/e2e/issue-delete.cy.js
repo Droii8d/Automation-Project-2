@@ -24,6 +24,10 @@ describe("Issue delete", () => {
       cy.get('[data-testid="icon:trash"]').click();
     });
     getConfirmModal().within(() => {
+      cy.contains("Are you sure you want to delete this issue?").should(
+        "be.visible"
+      );
+      cy.contains("Once you delete, it's gone for good").should("be.visible");
       cy.contains("Delete issue").should("be.visible").click();
     });
     getConfirmModal().should("not.exist");
@@ -46,6 +50,8 @@ describe("Issue delete", () => {
       cy.get('[data-testid="icon:trash"]').click();
     });
     getConfirmModal().within(() => {
+      cy.contains("Once you delete, it's gone for good").should("be.visible");
+      cy.contains("Delete issue").should("be.visible").click();
       cy.contains("Cancel").click();
     });
     getConfirmModal().should("not.exist");
