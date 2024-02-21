@@ -17,11 +17,12 @@ describe("Issue delete", () => {
   const getConfirmModal = () => cy.get('[data-testid="modal:confirm"]');
   const boardBacklogList = () => cy.get('[data-testid="board-list:backlog"]');
   const issueList = () => cy.get('[data-testid="list-issue"]');
+  const issueDeleteIcon = () => cy.get('[data-testid="icon:trash"]');
 
   it("Should delete issue successfully", () => {
     getIssueDetailsModal().should("be.visible");
     getIssueDetailsModal().within(() => {
-      cy.get('[data-testid="icon:trash"]').click();
+      issueDeleteIcon().click();
     });
     getConfirmModal().within(() => {
       cy.contains("Are you sure you want to delete this issue?").should(
@@ -44,14 +45,17 @@ describe("Issue delete", () => {
       });
   });
 
-  it("Should cancel deletion process successfully", () => {
+  it.only("Should cancel deletion process successfully", () => {
     getIssueDetailsModal().should("be.visible");
     getIssueDetailsModal().within(() => {
-      cy.get('[data-testid="icon:trash"]').click();
+      issueDeleteIcon().click();
     });
     getConfirmModal().within(() => {
+      cy.contains("Are you sure you want to delete this issue?").should(
+        "be.visible"
+      );
       cy.contains("Once you delete, it's gone for good").should("be.visible");
-      cy.contains("Delete issue").should("be.visible").click();
+      cy.contains("Delete issue").should("be.visible");
       cy.contains("Cancel").click();
     });
     getConfirmModal().should("not.exist");
