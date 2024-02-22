@@ -24,6 +24,7 @@ describe("Issue delete", () => {
     getIssueDetailsModal().within(() => {
       issueDeleteIcon().click();
     });
+    getConfirmModal().should("be.visible");
     getConfirmModal().within(() => {
       cy.contains("Are you sure you want to delete this issue?").should(
         "be.visible"
@@ -45,11 +46,12 @@ describe("Issue delete", () => {
       });
   });
 
-  it.only("Should cancel deletion process successfully", () => {
+  it("Should cancel deletion process successfully", () => {
     getIssueDetailsModal().should("be.visible");
     getIssueDetailsModal().within(() => {
       issueDeleteIcon().click();
     });
+    getConfirmModal().should("be.visible");
     getConfirmModal().within(() => {
       cy.contains("Are you sure you want to delete this issue?").should(
         "be.visible"
