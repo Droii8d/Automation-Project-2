@@ -24,6 +24,7 @@ describe("Issue delete", () => {
     getIssueDetailsModal().within(() => {
       issueDeleteIcon().click();
     });
+
     getConfirmModal().should("be.visible");
     getConfirmModal().within(() => {
       cy.contains("Are you sure you want to delete this issue?").should(
@@ -32,6 +33,7 @@ describe("Issue delete", () => {
       cy.contains("Once you delete, it's gone for good").should("be.visible");
       cy.contains("Delete issue").should("be.visible").click();
     });
+
     getConfirmModal().should("not.exist");
     getIssueDetailsModal().should("not.exist");
 
@@ -51,6 +53,7 @@ describe("Issue delete", () => {
     getIssueDetailsModal().within(() => {
       issueDeleteIcon().click();
     });
+
     getConfirmModal().should("be.visible");
     getConfirmModal().within(() => {
       cy.contains("Are you sure you want to delete this issue?").should(
@@ -60,8 +63,8 @@ describe("Issue delete", () => {
       cy.contains("Delete issue").should("be.visible");
       cy.contains("Cancel").click();
     });
-    getConfirmModal().should("not.exist");
 
+    getConfirmModal().should("not.exist");
     getIssueDetailsModal()
       .should("be.visible")
       .get('[data-testid="icon:close"]')
