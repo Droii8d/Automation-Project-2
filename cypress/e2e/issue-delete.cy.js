@@ -20,7 +20,7 @@ describe("Issue delete", () => {
   const issueDeleteIcon = () => cy.get('[data-testid="icon:trash"]');
   const issueDetailsModalCloseIcon = () => cy.get('[data-testid="icon:close"]');
 
-  it.only("Should delete issue successfully", () => {
+  it("Should delete issue successfully", () => {
     getIssueDetailsModal()
       .should("be.visible")
       .within(() => {
