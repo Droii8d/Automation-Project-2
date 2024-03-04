@@ -102,6 +102,8 @@ describe("Issue comments creating, editing and deleting", () => {
     getDeleteConfirmModal().within(() => {
       clickDeleteConfirm();
     });
+    getDeleteConfirmModal().should("not.exist");
+
     getIssueDetailsModal().within(() => {
       allComments().should("not.contain", randomComment2);
     });
