@@ -72,7 +72,7 @@ describe("Time tracking", () => {
     });
   });
 
-  it.only("Should create issue and log/remove logged spent time on issue", () => {
+  it("Should create issue, add time estimation and log/remove logged spent time on issue", () => {
     cy.get('[data-testid="modal:issue-create"]').within(() => {
       cy.wait(3000);
       cy.get('input[name="title"]').type(randomTitle);
@@ -100,10 +100,35 @@ describe("Time tracking", () => {
         cy.contains(logedTimeRemaining + "h remaining").should("be.visible");
         timeTrackingDoneButton().click();
       });
+    getIssueDetailsModal()
+      .should("be.visible")
+      .within(() => {
+        cy.contains("No time logged").should("not.exist");
+        cy.contains(logedTimeSpent + "h logged").should("be.visible");
+        cy.contains(logedTimeRemaining + "h remaining").should("be.visible");
+        issueDetailsModalCloseIcon().click();
+      });
+    cy.contains(randomTitle).click();
     getIssueDetailsModal().within(() => {
-      cy.contains("No time logged").should("not.exist");
-      cy.contains(logedTimeSpent + "h logged").should("be.visible");
-      cy.contains(logedTimeRemaining + "h remaining").should("be.visible");
+      cy.wait(7000);
+      timeTrackingSection().click();
     });
+    timeTrackingModal()
+      .should("be.visible")
+      .within(() => {
+        timeSpentInput().clear();
+        timeRemainingInput().clear();
+        cy.contains("No time logged").should("be.visible");
+        cy.contains(estimatedTimeValue_1 + "h estimated").should("be.visible");
+        timeTrackingDoneButton().click();
+      });
+    getIssueDetailsModal()
+      .should("be.visible")
+      .within(() => {
+        estimatedTime().should("have.value", estimatedTimeValue_1);
+        cy.contains("No time logged").should("be.visible");
+        cy.contains(estimatedTimeValue_1 + "h estimated").should("be.visible");
+        issueDetailsModalCloseIcon().click();
+      });
   });
 });
