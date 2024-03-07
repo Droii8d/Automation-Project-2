@@ -13,6 +13,9 @@ describe("Time tracking", () => {
   const randomTitle = faker.lorem.words(2);
   const getIssueDetailsModal = () =>
     cy.get('[data-testid="modal:issue-details"]');
+  const issueCreateModal = () => cy.get('[data-testid="modal:issue-create"]');
+  const issueTitleInput = () => cy.get('input[name="title"]');
+  const issueCreateSubmitButton = () => cy.get('button[type="submit"]');
   const estimatedTime = () => cy.get('[placeholder="Number"]');
   const issueDetailsModalCloseIcon = () => cy.get('[data-testid="icon:close"]');
   const timeTrackingSection = () => cy.get('[data-testid="icon:stopwatch"]');
@@ -26,16 +29,19 @@ describe("Time tracking", () => {
   const logedTimeRemaining = 5;
 
   it("Should create issue and add/edit/remove time estimation to the issue", () => {
-    cy.get('[data-testid="modal:issue-create"]').within(() => {
+    issueCreateModal().within(() => {
       cy.wait(3000);
-      cy.get('input[name="title"]').type(randomTitle);
-      cy.get('button[type="submit"]').click();
+      issueTitleInput().type(randomTitle);
+      issueCreateSubmitButton().click();
       cy.wait(30000);
     });
     cy.contains(randomTitle).click();
     getIssueDetailsModal().within(() => {
       cy.wait(7000);
-      cy.contains("No time logged").should("be.visible");
+      timeTrackingSection()
+        .next()
+        .contains("No time logged")
+        .should("be.visible");
       estimatedTime()
         .type(estimatedTimeValue_1)
         .should("have.value", estimatedTimeValue_1)
@@ -73,16 +79,19 @@ describe("Time tracking", () => {
   });
 
   it("Should create issue, add time estimation and log/remove logged spent time on issue", () => {
-    cy.get('[data-testid="modal:issue-create"]').within(() => {
+    issueCreateModal().within(() => {
       cy.wait(3000);
-      cy.get('input[name="title"]').type(randomTitle);
-      cy.get('button[type="submit"]').click();
+      issueTitleInput().type(randomTitle);
+      issueCreateSubmitButton().click();
       cy.wait(30000);
     });
     cy.contains(randomTitle).click();
     getIssueDetailsModal().within(() => {
       cy.wait(7000);
-      cy.contains("No time logged").should("be.visible");
+      timeTrackingSection()
+        .next()
+        .should("contain", "No time logged")
+        .should("be.visible");
       estimatedTime()
         .type(estimatedTimeValue_1)
         .should("have.value", estimatedTimeValue_1)
@@ -103,9 +112,18 @@ describe("Time tracking", () => {
     getIssueDetailsModal()
       .should("be.visible")
       .within(() => {
-        cy.contains("No time logged").should("not.exist");
-        cy.contains(logedTimeSpent + "h logged").should("be.visible");
-        cy.contains(logedTimeRemaining + "h remaining").should("be.visible");
+        timeTrackingSection()
+          .next()
+          .contains("No time logged")
+          .should("not.exist");
+        timeTrackingSection()
+          .next()
+          .contains(logedTimeSpent + "h logged")
+          .should("be.visible");
+        timeTrackingSection()
+          .next()
+          .contains(logedTimeRemaining + "h remaining")
+          .should("be.visible");
         issueDetailsModalCloseIcon().click();
       });
     cy.contains(randomTitle).click();
@@ -126,8 +144,14 @@ describe("Time tracking", () => {
       .should("be.visible")
       .within(() => {
         estimatedTime().should("have.value", estimatedTimeValue_1);
-        cy.contains("No time logged").should("be.visible");
-        cy.contains(estimatedTimeValue_1 + "h estimated").should("be.visible");
+        timeTrackingSection()
+          .next()
+          .should("contain", "No time logged")
+          .should("be.visible");
+        timeTrackingSection()
+          .next()
+          .contains(estimatedTimeValue_1 + "h estimated")
+          .should("be.visible");
         issueDetailsModalCloseIcon().click();
       });
   });
